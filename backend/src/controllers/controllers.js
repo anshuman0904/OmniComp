@@ -47,14 +47,34 @@ export const compress = async (req, res) => {
       req.file.originalname,
     ]);
 
-    const [infoText, fileObj] = result.data;
+    let [infoJson, fileObj] = result.data;
+    // 🧠 Handle stringified JSON from Gradio
+    if (typeof infoJson === "string") {
+      try {
+        infoJson = JSON.parse(
+          infoJson
+            .replace(/'/g, '"') // convert single quotes → double quotes
+            .replace(/None/g, 'null') // Python → JSON
+            .replace(/True/g, 'true')
+            .replace(/False/g, 'false')
+        );
+      } catch (parseErr) {
+        console.warn("⚠️ Failed to parse infoJson, raw value:", infoJson);
+      }
+    }
 
     console.log("✅ Compression complete!");
-    console.log("📝 Info text:", infoText);
+    console.log("🧾 Compression info:", infoJson);
     console.log("📂 File object returned:", fileObj);
 
+    console.log(infoJson);
+
     res.status(200).json({
-      message: infoText,
+      algorithm: infoJson.algorithm,
+      compressionRatio: infoJson.compression_ratio,
+      reductionPercent: infoJson.reduction_percent,
+      originalSize: infoJson.original_size,
+      compressedSize: infoJson.compressed_size,
       compressedFileUrl: fileObj?.url,
       outputFileName: fileObj?.orig_name || req.file.originalname,
     });
@@ -62,7 +82,6 @@ export const compress = async (req, res) => {
     console.error("💥 Compression error:", err);
     res.status(500).json({ error: "Compression failed", details: err.message });
   } finally {
-    // Schedule cleanup (instead of deleting immediately)
     scheduleCleanup(req.file?.path);
   }
 };
