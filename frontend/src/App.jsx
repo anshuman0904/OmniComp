@@ -46,7 +46,8 @@ function App() {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const res = await fetch(`http://localhost:5001/api/${mode}`, {
+      const baseUrl = import.meta.env.VITE_API_BASE || window.location.origin;
+      const res = await fetch(`${baseUrl}/api/${mode}`, {
         method: "POST",
         body: formData,
       });
