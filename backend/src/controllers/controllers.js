@@ -115,22 +115,36 @@ export const decompress = async (req, res) => {
       req.file.originalname,
     ]);
 
-    const [infoText, fileObj] = result.data;
+    let [infoJson, fileObj] = result.data;
+
+    // 🧠 Handle stringified JSON from Gradio
+    if (typeof infoJson === "string") {
+      try {
+        infoJson = JSON.parse(
+          infoJson
+            .replace(/'/g, '"')
+            .replace(/None/g, 'null')
+            .replace(/True/g, 'true')
+            .replace(/False/g, 'false')
+        );
+      } catch (parseErr) {
+        console.warn("⚠️ Failed to parse infoJson, raw value:", infoJson);
+      }
+    }
 
     console.log("✅ Decompression complete!");
-    console.log("📝 Info text:", infoText);
+    console.log("🧾 Decompression info:", infoJson);
     console.log("📂 File object returned:", fileObj);
 
     res.status(200).json({
-      message: infoText,
-      decompressedFileUrl: fileObj?.url,
-      outputFileName: fileObj?.orig_name || req.file.originalname,
+      algorithm: infoJson.algorithm,
+      restoredFileName: infoJson.restored_file_name,
+      decompressedFileUrl: fileObj?.url
     });
   } catch (err) {
     console.error("💥 Decompression error:", err);
     res.status(500).json({ error: "Decompression failed", details: err.message });
   } finally {
-    // Schedule cleanup (instead of deleting immediately)
     scheduleCleanup(req.file?.path);
   }
 };
