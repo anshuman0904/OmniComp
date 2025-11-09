@@ -9,6 +9,8 @@ function App() {
   const [dragActive, setDragActive] = useState(false);
   const [mode, setMode] = useState("compress");
   const [resultData, setResultData] = useState(null);
+  const [progressStages, setProgressStages] = useState([]);
+  const [currentStage, setCurrentStage] = useState("");
 
   const inputRef = useRef(null);
 
@@ -17,6 +19,8 @@ function App() {
     setMessage("");
     setDownloadUrl("");
     setResultData(null);
+    setProgressStages([]);
+    setCurrentStage("");
   };
 
   const handleDrop = (e) => {
@@ -27,6 +31,8 @@ function App() {
       setMessage("");
       setDownloadUrl("");
       setResultData(null);
+      setProgressStages([]);
+      setCurrentStage("");
     }
   };
 
@@ -38,6 +44,11 @@ function App() {
 
   const openFileDialog = () => inputRef.current.click();
 
+  const addProgressStage = (stage) => {
+    setProgressStages(prev => [...prev, stage]);
+    setCurrentStage(stage);
+  };
+
   const handleUpload = async () => {
     if (!file) {
       alert("Please select a file first!");
@@ -47,7 +58,28 @@ function App() {
     setMessage("");
     setDownloadUrl("");
     setResultData(null);
+    setProgressStages([]);
+    setCurrentStage("");
+
+    // Simulate the progress stages based on backend logs
+    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    
     try {
+      // Stage 1: File received
+      addProgressStage(`📁 Received file for ${mode}ion: ${file.name} (${file.type})`);
+      await delay(800);
+
+      // Stage 2: Connecting to Hugging Face
+      addProgressStage("🔗 Connecting to Hugging Face Space");
+      await delay(1000);
+
+      // Stage 3: File size
+      addProgressStage(`📊 File size: ${formatFileSize(file.size)}`);
+      await delay(500);
+
+      // Stage 4: Sending to route
+      addProgressStage(`🚀 Sending file to /${mode}_file route on Hugging Face`);
+      
       const formData = new FormData();
       formData.append("file", file);
       const baseUrl = import.meta.env.VITE_API_BASE || window.location.origin;
@@ -55,16 +87,28 @@ function App() {
         method: "POST",
         body: formData,
       });
+
+      await delay(1500);
+      
       const data = await res.json();
+      
       if (data.error) {
+        setCurrentStage("");
         setMessage("❌ " + data.error);
       } else {
-        setMessage("✅ " + (mode === "compress" ? "File compressed successfully!" : "File decompressed successfully!"));
+        // Stage 5: Complete
+        addProgressStage(`✅ ${mode === "compress" ? "Compression" : "Decompression"} complete!`);
+        await delay(800);
+        
+        setCurrentStage("");
+        setMessage("🎉 " + (mode === "compress" ? "File compressed successfully!" : "File decompressed successfully!"));
         setDownloadUrl(data.compressedFileUrl || data.decompressedFileUrl);
         setResultData(data);
       }
-    } catch {
+    } catch (error) {
+      setCurrentStage("");
       setMessage("❌ Failed to process file.");
+      console.error("Upload error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -90,12 +134,12 @@ function App() {
           <button
             className={`action-btn${mode==="compress"?"":" outline"}`}
             style={{background: mode==="compress"?"var(--accent)":"#e5f0fa", color:mode==="compress"?"#fff":"var(--accent)", border:mode==="compress"?"none":"2px solid #3f79fd"}}
-            onClick={() => { setMode("compress"); setFile(null); setResultData(null); }}
+            onClick={() => { setMode("compress"); setFile(null); setResultData(null); setProgressStages([]); setCurrentStage(""); }}
           >🗜️ Compress</button>
           <button
             className={`action-btn${mode==="decompress"?"":" outline"}`}
             style={{background: mode==="decompress"?"var(--accent)":"#e5f0fa", color:mode==="decompress"?"#fff":"var(--accent)", border:mode==="decompress"?"none":"2px solid #3f79fd"}}
-            onClick={() => { setMode("decompress"); setFile(null); setResultData(null); }}
+            onClick={() => { setMode("decompress"); setFile(null); setResultData(null); setProgressStages([]); setCurrentStage(""); setMessage(""); setDownloadUrl(""); }}
           >🎈 Decompress</button>
         </div>
         <div
@@ -130,6 +174,24 @@ function App() {
             ? "Compress File"
             : "Decompress File"}
         </button>
+
+        {isLoading && (
+          <div className="progress-container">
+            <div className="progress-spinner">
+              <div className="spinner"></div>
+            </div>
+            <div className="progress-stages">
+              {progressStages.map((stage, index) => (
+                <div 
+                  key={index} 
+                  className={`progress-stage ${index === progressStages.length - 1 ? 'current' : 'completed'}`}
+                >
+                  {stage}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         
         {(message || downloadUrl || resultData) && (
           <div className="result-section">

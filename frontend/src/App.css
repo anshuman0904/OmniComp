@@ -75,6 +75,7 @@
   font-size: 1em;
   margin-top: 0.7em;
   color: #204074;
+  text-align: center;
 }
 
 .action-btn {
@@ -238,6 +239,78 @@
   background: var(--accent2);
 }
 
+.progress-container {
+  width: 100%;
+  max-width: 520px;
+  margin: 2em auto 0 auto;
+  background: #fff;
+  border-radius: 16px;
+  padding: 2em;
+  border: 1px solid #e5f0fa;
+  box-shadow: 0 2px 12px rgba(63, 121, 253, 0.08);
+}
+
+.progress-spinner {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5em;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #e5f0fa;
+  border-top: 4px solid var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.progress-stages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+}
+
+.progress-stage {
+  padding: 0.8em 1.2em;
+  border-radius: 12px;
+  font-size: 0.95em;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+}
+
+.progress-stage.completed {
+  background: #f0f9ff;
+  color: #1e40af;
+  border-left-color: #22c55e;
+  opacity: 0.8;
+}
+
+.progress-stage.current {
+  background: linear-gradient(90deg, #f0f9ff, #e0f2fe);
+  color: #1e40af;
+  border-left-color: var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 2px 8px rgba(63, 121, 253, 0.15);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(63, 121, 253, 0.15);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 4px 16px rgba(63, 121, 253, 0.25);
+  }
+}
+
 @media (max-width: 800px) {
   .hero-title {
     font-size: 2.1em;
@@ -262,5 +335,17 @@
   }
   .compression-stats, .decompression-stats {
     padding: 1.2em;
+  }
+  .progress-container {
+    padding: 1.5em;
+    margin: 1.5em auto 0 auto;
+  }
+  .progress-stage {
+    padding: 0.6em 1em;
+    font-size: 0.9em;
+  }
+  .spinner {
+    width: 40px;
+    height: 40px;
   }
 }
