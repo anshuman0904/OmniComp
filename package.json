@@ -1,0 +1,21 @@
+{
+  "name": "compression",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm install --prefix backend && cd frontend && npm install && npm run build",
+    "start": "npm run start --prefix backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anshuman0904/OmniComp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anshuman0904/OmniComp/issues"
+  },
+  "homepage": "https://github.com/anshuman0904/OmniComp#readme"
+}
