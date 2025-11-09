@@ -134,7 +134,7 @@ function App() {
           <button
             className={`action-btn${mode==="compress"?"":" outline"}`}
             style={{background: mode==="compress"?"var(--accent)":"#e5f0fa", color:mode==="compress"?"#fff":"var(--accent)", border:mode==="compress"?"none":"2px solid #3f79fd"}}
-            onClick={() => { setMode("compress"); setFile(null); setResultData(null); setProgressStages([]); setCurrentStage(""); }}
+            onClick={() => { setMode("compress"); setFile(null); setResultData(null); setProgressStages([]); setCurrentStage(""); setMessage(""); setDownloadUrl("");}}
           >🗜️ Compress</button>
           <button
             className={`action-btn${mode==="decompress"?"":" outline"}`}
