@@ -8,6 +8,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [mode, setMode] = useState("compress");
+  const [resultData, setResultData] = useState(null);
 
   const inputRef = useRef(null);
 
@@ -15,6 +16,7 @@ function App() {
     setFile(e.target.files[0]);
     setMessage("");
     setDownloadUrl("");
+    setResultData(null);
   };
 
   const handleDrop = (e) => {
@@ -24,6 +26,7 @@ function App() {
       setFile(e.dataTransfer.files[0]);
       setMessage("");
       setDownloadUrl("");
+      setResultData(null);
     }
   };
 
@@ -43,6 +46,7 @@ function App() {
     setIsLoading(true);
     setMessage("");
     setDownloadUrl("");
+    setResultData(null);
     try {
       const formData = new FormData();
       formData.append("file", file);
@@ -55,14 +59,23 @@ function App() {
       if (data.error) {
         setMessage("❌ " + data.error);
       } else {
-        setMessage("✅ " + data.message);
+        setMessage("✅ " + (mode === "compress" ? "File compressed successfully!" : "File decompressed successfully!"));
         setDownloadUrl(data.compressedFileUrl || data.decompressedFileUrl);
+        setResultData(data);
       }
     } catch {
       setMessage("❌ Failed to process file.");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   };
 
   return (
@@ -77,12 +90,12 @@ function App() {
           <button
             className={`action-btn${mode==="compress"?"":" outline"}`}
             style={{background: mode==="compress"?"var(--accent)":"#e5f0fa", color:mode==="compress"?"#fff":"var(--accent)", border:mode==="compress"?"none":"2px solid #3f79fd"}}
-            onClick={() => { setMode("compress"); setFile(null); }}
+            onClick={() => { setMode("compress"); setFile(null); setResultData(null); }}
           >🗜️ Compress</button>
           <button
             className={`action-btn${mode==="decompress"?"":" outline"}`}
             style={{background: mode==="decompress"?"var(--accent)":"#e5f0fa", color:mode==="decompress"?"#fff":"var(--accent)", border:mode==="decompress"?"none":"2px solid #3f79fd"}}
-            onClick={() => { setMode("decompress"); setFile(null); }}
+            onClick={() => { setMode("decompress"); setFile(null); setResultData(null); }}
           >🎈 Decompress</button>
         </div>
         <div
@@ -117,16 +130,65 @@ function App() {
             ? "Compress File"
             : "Decompress File"}
         </button>
-        {(message || downloadUrl) && (
+        
+        {(message || downloadUrl || resultData) && (
           <div className="result-section">
-            {message && <div>{message}</div>}
+            {message && <div className="result-message">{message}</div>}
+            
+            {resultData && mode === "compress" && (
+              <div className="compression-stats">
+                <h3 className="stats-title">📊 Compression Results</h3>
+                <div className="compression-stats-grid">
+                  <div className="stat-item">
+                    <div className="stat-label">Algorithm</div>
+                    <div className="stat-value algorithm-badge">{resultData.algorithm}</div>
+                  </div>
+                  <div className="stat-item">
+                    <div className="stat-label">Reduction</div>
+                    <div className="stat-value reduction-percent">{resultData.reductionPercent?.toFixed(1)}%</div>
+                  </div>
+                  <div className="stat-item">
+                    <div className="stat-label">Compression Ratio</div>
+                    <div className="stat-value">{resultData.compressionRatio?.toFixed(2)}:1</div>
+                  </div>
+                </div>
+                <div className="size-comparison">
+                  <div className="size-item original">
+                    <span className="size-label">Original Size</span>
+                    <span className="size-value">{formatFileSize(resultData.originalSize)}</span>
+                  </div>
+                  <div className="size-arrow">→</div>
+                  <div className="size-item compressed">
+                    <span className="size-label">Compressed Size</span>
+                    <span className="size-value">{formatFileSize(resultData.compressedSize)}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {resultData && mode === "decompress" && (
+              <div className="decompression-stats">
+                <h3 className="stats-title">🎈 Decompression Results</h3>
+                <div className="decompression-stats-grid">
+                  <div className="stat-item">
+                    <div className="stat-label">Algorithm</div>
+                    <div className="stat-value algorithm-badge">{resultData.algorithm}</div>
+                  </div>
+                  <div className="stat-item">
+                    <div className="stat-label">Restored File</div>
+                    <div className="stat-value file-name">{resultData.restoredFileName}</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {downloadUrl && (
               <a
                 href={downloadUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="download-link"
-              >⬇️ Download Result</a>
+              >⬇️ Download {mode === "compress" ? "Compressed" : "Decompressed"} File</a>
             )}
           </div>
         )}

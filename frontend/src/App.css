@@ -105,15 +105,137 @@
   font-size: 1.09em;
 }
 
+.result-message {
+  margin-bottom: 1.5em;
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
+.compression-stats, .decompression-stats {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5em;
+  margin: 1.5em 0;
+  border: 1px solid #e5f0fa;
+  box-shadow: 0 2px 12px rgba(63, 121, 253, 0.08);
+}
+
+.stats-title {
+  font-size: 1.3em;
+  font-weight: 700;
+  margin-bottom: 1.2em;
+  color: #17223b;
+}
+
+.compression-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1em;
+  margin-bottom: 1.5em;
+}
+.decompression-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1em;
+  margin-bottom: 1.5em;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.85em;
+  color: #42618d;
+  margin-bottom: 0.4em;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: #17223b;
+}
+
+.algorithm-badge {
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  color: #fff;
+  padding: 0.3em 0.8em;
+  border-radius: 20px;
+  font-size: 0.9em;
+  display: inline-block;
+}
+
+.reduction-percent {
+  color: #22c55e;
+  font-size: 1.3em;
+}
+
+.file-name {
+  color: var(--accent);
+  font-size: 0.95em;
+  word-break: break-all;
+}
+
+.size-comparison {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  padding: 1em;
+  background: #f8fafc;
+  border-radius: 12px;
+  margin-top: 1em;
+}
+
+.size-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.size-label {
+  font-size: 0.8em;
+  color: #42618d;
+  margin-bottom: 0.3em;
+  font-weight: 500;
+}
+
+.size-value {
+  font-size: 1.2em;
+  font-weight: 700;
+}
+
+.original .size-value {
+  color: #ef4444;
+}
+
+.compressed .size-value {
+  color: #22c55e;
+}
+
+.size-arrow {
+  font-size: 1.5em;
+  color: var(--accent);
+  font-weight: bold;
+}
+
 .download-link {
   display: inline-block;
-  margin-top: 1.15em;
-  padding: 0.7em 2em;
+  margin-top: 1.5em;
+  padding: 0.8em 2.2em;
   background: var(--accent);
   color: #fff;
   font-weight: 600;
   border-radius: 999px;
   text-decoration: none;
+  transition: background 0.17s;
+  box-shadow: 0 2px 8px rgba(63, 121, 253, 0.2);
+}
+
+.download-link:hover {
+  background: var(--accent2);
 }
 
 @media (max-width: 800px) {
@@ -126,5 +248,19 @@
   }
   .hero-content {
     padding: 38px 8px 0px 8px;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 0.8em;
+  }
+  .size-comparison {
+    flex-direction: column;
+    gap: 0.5em;
+  }
+  .size-arrow {
+    transform: rotate(90deg);
+  }
+  .compression-stats, .decompression-stats {
+    padding: 1.2em;
   }
 }
