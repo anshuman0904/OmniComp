@@ -12,7 +12,7 @@
   width: 100%;
   max-width: 720px;
   margin: 0 auto;
-  padding: 56px 20px 24px 20px;
+  padding: 26px 20px 24px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,6 +21,7 @@
 .hero-title {
   font-size: 2.9em;
   font-weight: 700;
+  margin-block-start: 0.3em;
   text-align: center;
   margin-bottom: 0.16em;
   letter-spacing: -1.2px;

@@ -135,12 +135,12 @@ function App() {
             className={`action-btn${mode==="compress"?"":" outline"}`}
             style={{background: mode==="compress"?"var(--accent)":"#e5f0fa", color:mode==="compress"?"#fff":"var(--accent)", border:mode==="compress"?"none":"2px solid #3f79fd"}}
             onClick={() => { setMode("compress"); setFile(null); setResultData(null); setProgressStages([]); setCurrentStage(""); setMessage(""); setDownloadUrl("");}}
-          >🗜️ Compress</button>
+          >Compress</button>
           <button
             className={`action-btn${mode==="decompress"?"":" outline"}`}
             style={{background: mode==="decompress"?"var(--accent)":"#e5f0fa", color:mode==="decompress"?"#fff":"var(--accent)", border:mode==="decompress"?"none":"2px solid #3f79fd"}}
             onClick={() => { setMode("decompress"); setFile(null); setResultData(null); setProgressStages([]); setCurrentStage(""); setMessage(""); setDownloadUrl(""); }}
-          >🎈 Decompress</button>
+          >Decompress</button>
         </div>
         <div
           className={`upload-zone${dragActive ? " active" : ""}`}
@@ -230,7 +230,7 @@ function App() {
 
             {resultData && mode === "decompress" && (
               <div className="decompression-stats">
-                <h3 className="stats-title">🎈 Decompression Results</h3>
+                <h3 className="stats-title">Decompression Results</h3>
                 <div className="decompression-stats-grid">
                   <div className="stat-item">
                     <div className="stat-label">Algorithm</div>
